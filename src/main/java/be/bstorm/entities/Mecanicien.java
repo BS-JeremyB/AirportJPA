@@ -5,23 +5,63 @@ import be.bstorm.entities.embedded.Adresse;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @ToString @EqualsAndHashCode
-public class Mecanicien {
+public class Mecanicien extends Membre {
 
     public Mecanicien(String nom, String telephone, Adresse adresse) {
-        this.nom = nom;
-        this.telephone = telephone;
-        this.adresse = adresse;
+        super(nom, telephone, adresse);
     }
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-    private String nom;
-    private String telephone;
+    public Mecanicien(){};
 
-    @Embedded
-    private Adresse adresse;
+    @OrderBy("numero")
+    @OneToMany(mappedBy = "verificateur")
+    private List<Intervention> interventionsVerificateur = new ArrayList<>();
 
+    @OrderBy("numero")
+    @OneToMany(mappedBy = "reparateur")
+    private List<Intervention> interventionsReparateur = new ArrayList<>();
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    private List<TypeAvion> typeAvions;
+
+    public List<TypeAvion> getTypeAvions() {
+        return List.copyOf(typeAvions);
+    }
+
+    public void addTypeAvion(TypeAvion typeAvion){
+        this.typeAvions.add(typeAvion);
+    }
+
+    public void removeTypeAvion(TypeAvion typeAvion){
+        this.typeAvions.remove(typeAvion);
+    }
+
+    public List<Intervention> getInterventionsRep() {
+        return List.copyOf(interventionsReparateur);
+    }
+
+    public void addInterventionRep(Intervention intervention){
+        this.interventionsReparateur.add(intervention);
+    }
+
+    public void removeInterventionRep(Intervention intervention){
+        this.interventionsReparateur.remove(intervention);
+    }
+
+    public List<Intervention> getInterventionsVer() {
+        return List.copyOf(interventionsVerificateur);
+    }
+
+    public void addInterventionVer(Intervention intervention){
+        this.interventionsVerificateur.add(intervention);
+    }
+
+    public void removeInterventionVer(Intervention intervention){
+        this.interventionsVerificateur.remove(intervention);
+    }
 }
